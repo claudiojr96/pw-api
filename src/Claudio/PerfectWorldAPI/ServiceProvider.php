@@ -14,7 +14,13 @@ class ServiceProvider extends BaseServiceProvider
      */
     public function register()
     {
-        $this->publishFiles();
+        $this->publishes([
+            __DIR__.'/../config/pw-api.php' => config_path('pw-api.php'),
+        ], 'pw-api-config');
+
+        $this->publishes([
+            __DIR__.'/../../lang' => base_path('resources/lang'),
+        ]);
     }
 
     /**
@@ -26,21 +32,4 @@ class ServiceProvider extends BaseServiceProvider
     {
 
     }
-
-    /**
-     * Publish files for the package.
-     *
-     * @return void
-     */
-    protected function publishFiles()
-    {
-        $this->publishes([
-            __DIR__ . '/../../config/pw-api.php' => config_path('pw-api.php'),
-        ]);
-
-        $this->publishes([
-            __DIR__.'/../../lang' => base_path('resources/lang'),
-        ]);
-    }
-
 }

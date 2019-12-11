@@ -6,8 +6,15 @@
     "php": ">=5.4.0"
   },
   "autoload": {
-    "psr-0" : {
-      "Claudio\\PerfectWorldAPI" : "src/"
+    "psr-4" : {
+      "Claudio\\PerfectWorldAPI" : "src"
+    }
+  },
+  "extra": {
+    "laravel": {
+      "providers": [
+        "Claudio\\PerfectWorldAPI\\ServiceProvider"
+      ]
     }
   },
   "minimum-stability": "stable"
