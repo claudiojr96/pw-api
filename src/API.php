@@ -1,6 +1,9 @@
 <?php
 
-namespace Claudio\PerfectWorldAPI;
+namespace Claudio\PerfectWorldApi;
+
+use Exception;
+use Claudio\PerfectWorldApi\Gamed;
 
 /**
  * Class API
@@ -24,9 +27,9 @@ class API
         // Check if there is a protocol file for the set game version
         $version = config('pw-api.game_version');
 
-        if ( file_exists( __DIR__ . '/../../protocols/pw_v' . $version . '.php' ) )
+        if ( file_exists( __DIR__ . '/../protocols/pw_v' . $version . '.php' ) )
         {
-            require( __DIR__ . '/../../protocols/pw_v' . $version . '.php' );
+            require( __DIR__ . '/../protocols/pw_v' . $version . '.php' );
             if ( isset( $PROTOCOL ) )
             {
                 $this->data = $PROTOCOL;
@@ -34,7 +37,7 @@ class API
         }
         else
         {
-            throw new \Exception( trans( 'pw-api-messages.no_version', ['version' => $version] ) );
+            throw new Exception( trans( 'pw-api-messages.no_version', ['version' => $version] ) );
         }
     }
 
@@ -72,9 +75,8 @@ class API
         $pack = $this->gamed->createHeader($this->data['code']['getRoleBase'], $pack);
         $send = $this->gamed->SendToGamedBD($pack);
         $data = $this->gamed->deleteHeader($send);
-        $user = $this->gamed->unmarshal($data, $this->data['role']['base']);
 
-        return $user;
+        return $this->gamed->unmarshal($data, $this->data['role']['base']);
     }
 
     public function getRoleStatus($role)
@@ -83,9 +85,8 @@ class API
         $pack = $this->gamed->createHeader($this->data['code']['getRoleStatus'], $pack);
         $send = $this->gamed->SendToGamedBD($pack);
         $data = $this->gamed->deleteHeader($send);
-        $user = $this->gamed->unmarshal($data, $this->data['role']['status']);
 
-        return $user;
+        return $this->gamed->unmarshal($data, $this->data['role']['status']);
     }
 
     public function getRoleInventory($role)
@@ -94,9 +95,8 @@ class API
         $pack = $this->gamed->createHeader($this->data['code']['getRoleInventory'], $pack);
         $send = $this->gamed->SendToGamedBD($pack);
         $data = $this->gamed->deleteHeader($send);
-        $user = $this->gamed->unmarshal($data, $this->data['role']['pocket']);
 
-        return $user;
+        return $this->gamed->unmarshal($data, $this->data['role']['pocket']);
     }
 
     public function getRoleEquipment($role)
@@ -105,9 +105,8 @@ class API
         $pack = $this->gamed->createHeader($this->data['code']['getRoleEquipment'], $pack);
         $send = $this->gamed->SendToGamedBD($pack);
         $data = $this->gamed->deleteHeader($send);
-        $user = $this->gamed->unmarshal($data, $this->data['role']['equipment']);
 
-        return $user;
+        return $this->gamed->unmarshal($data, $this->data['role']['equipment']);
     }
 
     public function getRolePetBadge($role)
@@ -116,9 +115,8 @@ class API
         $pack = $this->gamed->createHeader(3088, $pack);
         $send = $this->gamed->SendToGamedBD($pack);
         $data = $this->gamed->deleteHeader($send);
-        $user = $this->gamed->unmarshal($data, $this->data['role']['pocket']['petbadge']);
 
-        return $user;
+        return $this->gamed->unmarshal($data, $this->data['role']['pocket']['petbadge']);
     }
 
     public function getRoleStorehouse($role)
@@ -127,9 +125,8 @@ class API
         $pack = $this->gamed->createHeader($this->data['code']['getRoleStoreHouse'], $pack);
         $send = $this->gamed->SendToGamedBD($pack);
         $data = $this->gamed->deleteHeader($send);
-        $store = $this->gamed->unmarshal($data, $this->data['role']['storehouse']);
 
-        return $store;
+        return $this->gamed->unmarshal($data, $this->data['role']['storehouse']);
     }
 
     public function getRoleTask($role)
@@ -138,9 +135,8 @@ class API
         $pack = $this->gamed->createHeader($this->data['code']['getRoleTask'], $pack);
         $send = $this->gamed->SendToGamedBD($pack);
         $data = $this->gamed->deleteHeader($send);
-        $user = $this->gamed->unmarshal($data, $this->data['role']['task']);
 
-        return $user;
+        return $this->gamed->unmarshal($data, $this->data['role']['task']);
     }
 
     /**
@@ -154,9 +150,8 @@ class API
         $pack = $this->gamed->createHeader( $this->data['code']['getUserRoles'], $pack );
         $send = $this->gamed->SendToGamedBD( $pack );
         $data = $this->gamed->deleteHeader( $send );
-        $roles = $this->gamed->unmarshal( $data, $this->data['user']['roles'] );
 
-        return $roles;
+        return $this->gamed->unmarshal( $data, $this->data['user']['roles'] );
     }
 
     /**
@@ -170,14 +165,7 @@ class API
         $data = $this->gamed->cuint($this->data['code']['getUser']).$this->gamed->cuint(strlen($pack)).$pack;
         $send = $this->gamed->SendToGamedBD($data);
         $strlarge = unpack("H", substr($send, 2, 1 ));
-        if(substr($strlarge[1], 0, 1) == 8)
-        {
-            $tmp =	12;
-        }
-        else
-        {
-            $tmp = 11;
-        }
+        $tmp = substr($strlarge[1], 0, 1) == 8 ? 12 : 11;
         $send = substr($send, $tmp);
         $user = $this->gamed->unmarshal($send, $this->data['user']['info']);
         $user['login_ip'] = $this->gamed->getIp($this->gamed->reverseOctet(substr($user['login_record'], 8, 8)));
@@ -510,7 +498,7 @@ class API
 
     public function serverOnline()
     {
-        return @fsockopen( config( 'pw-api.host', '127.0.0.1' ), config( 'pw-api.ports.client' ), $errCode, $errStr, 1 ) ? TRUE : FALSE;
+        return (bool) @fsockopen( config( 'pw-api.host', '127.0.0.1' ), config( 'pw-api.ports.client' ), $errCode, $errStr, 1 );
     }
 
     public function ports()
@@ -520,7 +508,7 @@ class API
         foreach ( $port_list as $name => $port )
         {
             $ports[$name]['port'] = $port;
-            $ports[$name]['open'] = @fsockopen( config( 'pw-api.host', '127.0.0.1' ), $port, $errCode, $errStr, 1 ) ? TRUE : FALSE;
+            $ports[$name]['open'] = (bool) @fsockopen( config( 'pw-api.host', '127.0.0.1' ), $port, $errCode, $errStr, 1 );
         }
         return $ports;
     }

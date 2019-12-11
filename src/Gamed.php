@@ -1,6 +1,6 @@
 <?php
 
-namespace Claudio\PerfectWorldAPI;
+namespace Claudio\PerfectWorldApi;
 
 /**
  * Class Gamed
@@ -26,9 +26,8 @@ class Gamed
         $this->unpackCuint($data, $length);
         $this->unpackCuint($data, $length);
         $length += 8;
-        $data = substr($data, $length);
 
-        return $data;
+        return substr($data, $length);
     }
 
     public function createHeader($opcode, $data)
@@ -106,9 +105,8 @@ class Gamed
     {
         $value = str_split($value, 2);
         $value = $value[3] . $value[2] . $value[1] . $value[0];
-        $value = hexdec($value);
 
-        return $value;
+        return hexdec($value);
     }
 
     public function getTime($str)
@@ -125,19 +123,19 @@ class Gamed
     {
         $ip = ip2long($str);
         $ip = dechex($ip);
-        $ip = hexdec($this->reverseOctet($ip));
 
-        return $ip;
+        return hexdec($this->reverseOctet($ip));
     }
 
     public function cuint($data)
     {
-        if($data < 64)
+        if ($data < 64) {
             return strrev(pack("C", $data));
-        else if($data < 16384)
+        } elseif ($data < 16384) {
             return strrev(pack("S", ($data | 0x8000)));
-        else if($data < 536870912)
+        } elseif ($data < 536870912) {
             return strrev(pack("I", ($data | 0xC0000000)));
+        }
         return strrev(pack("c", -32) . pack("i", $data));
     }
 
@@ -173,15 +171,15 @@ class Gamed
         {
             $hex = hexdec(bin2hex(substr($data, $p, 1)));
             $min = 0;
-            if($hex < 0x80){
+            if ($hex < 0x80) {
                 $size = 1;
-            }else if($hex < 0xC0){
+            } elseif ($hex < 0xC0) {
                 $size = 2;
                 $min = 0x8000;
-            }else if($hex < 0xE0){
+            } elseif ($hex < 0xE0) {
                 $size = 4;
                 $min = 0xC0000000;
-            }else{
+            } else{
                 $p++;
                 $size = 4;
             }
@@ -191,17 +189,17 @@ class Gamed
             return $unpackCuint;
         }else{
             $byte = unpack("Carray",substr($data,$p,1));
-            if($byte['array'] < 0x80){
+            if ($byte['array'] < 0x80) {
                 $p++;
-            }else if($byte['array'] < 0xC0){
+            } elseif ($byte['array'] < 0xC0) {
                 $byte = unpack("Sarray", strrev(substr($data, $p, 2)));
                 $byte['array'] -= 0x8000;
                 $p += 2;
-            }else if($byte['array'] < 0xE0){
+            } elseif ($byte['array'] < 0xE0) {
                 $byte = unpack("Iarray", strrev(substr($data, $p, 4)));
                 $byte['array'] -= 0xC0000000;
                 $p += 4;
-            }else{
+            } else{
                 $prom = strrev(substr($data, $p, 5));
                 $byte = unpack("Iarray", strrev($prom));
                 $p += 4;
@@ -243,7 +241,7 @@ class Gamed
                     break;
                 case 2:
                     $buffer = socket_read( $sock, 1024, PHP_BINARY_READ );
-                    while( strlen( $buffer ) == 1024 )
+                    while( strlen( $buffer ) === 1024 )
                     {
                         $buf .= $buffer;
                         $buffer = socket_read( $sock, 1024, PHP_BINARY_READ );
@@ -323,8 +321,7 @@ class Gamed
                     case 'cuint':
                         $cui = $this->unpackCuint($rb, $tmp);
                         $rb = substr($rb, $tmp);
-                        if($cui > 0) $this->cycle = $cui;
-                        else $this->cycle = -1;
+                        $this->cycle = $cui > 0 ? $cui : -1;
                         break;
                     case 'octets':
                         $data[$key] = $this->unpackOctet($rb, $tmp);
@@ -366,7 +363,7 @@ class Gamed
         $this->cycle = false;
         $data = '';
         foreach($struct as $key => $val){
-            if(substr($key, 0, 1) == "@") continue;
+            if(substr($key, 0, 1) === "@") continue;
             if(is_array($val)){
                 if($this->cycle){
                     if($this->cycle > 0){
@@ -422,7 +419,7 @@ class Gamed
     public function MaxOnlineUserID( $arr )
     {
         $max = $arr[0]['userid'];
-        for($i=1;$i<count($arr);$i++){
+        for($i=1;$i<(is_countable($arr) ? count($arr) : 0);$i++){
             if($arr[$i]['userid'] > $max){
                 $max = $arr[$i]['userid'];
             }

@@ -1,6 +1,6 @@
 <?php
 
-namespace Claudio\PerfectWorldAPI;
+namespace Claudio\PerfectWorldApi;
 
 use Illuminate\Support\ServiceProvider as BaseServiceProvider;
 
@@ -19,7 +19,7 @@ class ServiceProvider extends BaseServiceProvider
         ], 'pw-api-config');
 
         $this->publishes([
-            __DIR__.'/../../lang' => base_path('resources/lang'),
+            __DIR__.'/../lang' => base_path('resources/lang'),
         ]);
     }
 
