@@ -7,13 +7,13 @@
   },
   "autoload": {
     "psr-4" : {
-      "Claudio\\PerfectWorldAPI" : "src"
+      "Claudio\\PerfectWorldApi\\" : "src"
     }
   },
   "extra": {
     "laravel": {
       "providers": [
-        "Claudio\\PerfectWorldAPI\\ServiceProvider"
+        "Claudio\\PerfectWorldApi\\ServiceProvider"
       ]
     }
   },
