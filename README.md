@@ -1,3 +1,3 @@
 ## Perfect World API
 
-I will fix this later.
+Original author: [@tomirons](https://github.com/tomirons)

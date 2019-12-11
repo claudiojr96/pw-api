@@ -1,4 +1,6 @@
-<?php namespace Huludini\PerfectWorldAPI;
+<?php
+
+namespace Claudio\PerfectWorldAPI;
 
 use Illuminate\Support\ServiceProvider as BaseServiceProvider;
 

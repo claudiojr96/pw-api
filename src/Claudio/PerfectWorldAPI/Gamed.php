@@ -1,6 +1,6 @@
 <?php
 
-namespace Huludini\PerfectWorldAPI;
+namespace Claudio\PerfectWorldAPI;
 
 /**
  * Class Gamed

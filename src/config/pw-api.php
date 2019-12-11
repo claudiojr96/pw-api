@@ -7,7 +7,7 @@ return [
      *
      * @var string
      */
-    'local' => '127.0.0.1',
+    'host' => env('PW_API_HOST', '127.0.0.1'),
 
     /**
      * These ports MUST be open if you the package isn't on the host machine
@@ -28,7 +28,7 @@ return [
      *
      * @var int
      */
-    'game_version' => '07',
+    'game_version' => env('PW_API_VERSION', '101'),
 
     'maxbuffer' => 65536,
 
